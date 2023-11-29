@@ -14,6 +14,17 @@ class LocationInput extends StatefulWidget {
 
 class _LocationInputState extends State<LocationInput> {
   PlaceLocation? _pickedLocation;
+
+  String get locationImage {
+    if (_pickedLocation == null) {
+      return '';
+    }
+
+    final lat = _pickedLocation!.latitude;
+    final lng = _pickedLocation!.longtitude;
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng=&zoom=16&size=600x300&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=YOUR_API_KEY';
+  }
+
   var _isGettingLocation = false;
 
   void _getCurrentLocation() async {
@@ -57,8 +68,11 @@ class _LocationInputState extends State<LocationInput> {
     final address = resData['results'][0]['formatted_address'];
 
     setState(() {
-      _pickedLocation =
-          PlaceLocation(latitude: lat, longtitude: lng, address: address);
+      _pickedLocation = PlaceLocation(
+        latitude: lat,
+        longtitude: lng,
+        address: address,
+      );
       _isGettingLocation = false;
     });
   }
@@ -72,6 +86,15 @@ class _LocationInputState extends State<LocationInput> {
             color: Theme.of(context).colorScheme.onBackground,
           ),
     );
+
+    if (_isGettingLocation) {
+      priviewContent = Image.network(
+        locationImage,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    }
     if (_isGettingLocation) {
       priviewContent = const CircularProgressIndicator();
     }
